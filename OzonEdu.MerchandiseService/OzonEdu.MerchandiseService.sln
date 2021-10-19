@@ -7,6 +7,7 @@ ProjectSection(SolutionItems) = preProject
 	Dockerfile = Dockerfile
 	..\README.md = ..\README.md
 	..\.gitignore = ..\.gitignore
+	docker-compose.yml = docker-compose.yml
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AA7C3F33-23DE-4BC8-9BEB-0E3B0CF1EEC1}"
