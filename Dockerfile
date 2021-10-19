@@ -1,12 +1,12 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build 
 
 WORKDIR /src
-COPY ["src/OzoneEdu.MerchandiseService/OzoneEdu.MerchandiseService.csproj","src/OzoneEdu.MerchandiseService/"]
+COPY ["OzonEdu.MerchandiseService/src/OzoneEdu.MerchandiseService/OzoneEdu.MerchandiseService.csproj","src/OzoneEdu.MerchandiseService/"]
 
 RUN dotnet restore "src/OzoneEdu.MerchandiseService/OzoneEdu.MerchandiseService.csproj"
 COPY . .
 
-WORKDIR "/src/src/OzoneEdu.MerchandiseService"
+WORKDIR "/src/OzonEdu.MerchandiseService/src/OzoneEdu.MerchandiseService"
 RUN dotnet build "OzoneEdu.MerchandiseService.csproj" -c Releas -o /app/build
 
 FROM build AS publish
