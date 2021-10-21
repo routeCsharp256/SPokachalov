@@ -4,8 +4,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FD5FA813-6CD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{99B731CB-552E-4EAE-954E-96E8DAFF6A0D}"
 ProjectSection(SolutionItems) = preProject
-	..\README.md = ..\README.md
-	..\.gitignore = ..\.gitignore
+	.gitignore = .gitignore
+	Dockerfile = Dockerfile
+	README.md = README.md
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AA7C3F33-23DE-4BC8-9BEB-0E3B0CF1EEC1}"
@@ -13,6 +14,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{D502A8DA-5EB3-4F60-812D-251B8500F838}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{0B3B19D6-78F1-4B8F-9160-52EE9479CCA1}"
+ProjectSection(SolutionItems) = preProject
+	deploy\docker-compose.yml = deploy\docker-compose.yml
+EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OzoneEdu.MerchandiseService", "src\OzoneEdu.MerchandiseService\OzoneEdu.MerchandiseService.csproj", "{7A88CD18-AF45-4FF3-AC46-817FACF0C59F}"
 EndProject
