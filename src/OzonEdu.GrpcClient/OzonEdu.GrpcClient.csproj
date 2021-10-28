@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Grpc.Core.Api" Version="2.40.0" />
+      <PackageReference Include="Grpc.Net.Client" Version="2.40.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\OzonEdu.Grpc\OzonEdu.Grpc.csproj" />
+      <ProjectReference Include="..\OzonEdu.HttpModels\OzonEdu.HttpModels.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Program.cs" />
+    </ItemGroup>
+
+</Project>

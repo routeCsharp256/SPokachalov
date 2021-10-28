@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Infrastructure\Swagger\**" />
+  </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <EmbeddedResource Remove="Infrastructure\Swagger\**" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <None Remove="Infrastructure\Swagger\**" />
+    </ItemGroup>
+</Project>
