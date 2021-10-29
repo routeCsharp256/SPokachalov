@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace OzonEdu.Infrastructure.Middlewares
 {
-    public class RequestLoggingMiddleware
+    public sealed class RequestLoggingMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<RequestLoggingMiddleware> _logger;
@@ -30,7 +30,7 @@ namespace OzonEdu.Infrastructure.Middlewares
                 // context.Request.EnableBuffering();
                 // ......
                 //context.Request.Body.Position = 0;
-                _logger.LogInformation($"Request headers: {String.Join(";",context.Request.Headers)}");
+               await Task.FromResult(_logger.LogInformation($"Request headers: {String.Join(";", context.Request.Headers)}"));
                 _logger.LogInformation($"Route: {context.Request.Path}");
                 _logger.LogInformation($"Response headers: {String.Join(";", context.Response.Headers)}");
             }

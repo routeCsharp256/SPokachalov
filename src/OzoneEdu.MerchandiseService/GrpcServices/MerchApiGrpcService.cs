@@ -6,7 +6,7 @@ using OzonEdu.MerchApi.Grpc;
 
 namespace OzoneEdu.MerchandiseService.GrpcServices
 {
-    public class MerchApiGrpcService: MerchApiGrpc.MerchApiGrpcBase
+    public sealed class MerchApiGrpcService : MerchApiGrpc.MerchApiGrpcBase
     {
         private readonly IMerchService _service;
 
@@ -15,9 +15,10 @@ namespace OzoneEdu.MerchandiseService.GrpcServices
             _service = service;
         }
 
-        public override async Task<GetMerchItemResponseUnit> GetMerch(GetMerchItemsRequest request, ServerCallContext context)
+        public override async Task<GetMerchItemResponseUnit> GetMerch(GetMerchItemsRequest request,
+            ServerCallContext context)
         {
-            var merch = await _service.GetMerch(request.UserId,context.CancellationToken);
+            var merch = await _service.GetMerch(request.UserId, context.CancellationToken);
             return new GetMerchItemResponseUnit
             {
                 ItemId = merch.ItemId,
@@ -25,16 +26,20 @@ namespace OzoneEdu.MerchandiseService.GrpcServices
             };
         }
 
-        public override async Task<GetMerchItemsResponse> GetMerchInfoByUserId(GetMerchItemsRequest request, ServerCallContext context)
+        public override async Task<GetMerchItemsResponse> GetMerchInfoByUserId(GetMerchItemsRequest request,
+            ServerCallContext context)
         {
-            var listMerch = await _service.GetMerchesByUserId(request.UserId,context.CancellationToken);
+            var listMerch = await _service.GetMerchesByUserId(request.UserId, context.CancellationToken);
             return new GetMerchItemsResponse
             {
-                MerchItems = {listMerch.Select(x=>new GetMerchItemResponseUnit()
+                MerchItems =
                 {
-                    ItemId = x.ItemId,
-                    ItemName = x.ItemName
-                })}
+                    listMerch.Select(x => new GetMerchItemResponseUnit()
+                    {
+                        ItemId = x.ItemId,
+                        ItemName = x.ItemName
+                    })
+                }
             };
         }
     }

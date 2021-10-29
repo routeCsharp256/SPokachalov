@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using OzonEdu.Infrastructure.Interceptors;
 using OzonEdu.MerchandiseService.Services.Interfaces;
 using OzoneEdu.MerchandiseService.GrpcServices;
@@ -9,17 +8,15 @@ using OzoneEdu.MerchandiseService.Services;
 
 namespace OzoneEdu.MerchandiseService
 {
-    public class Startup
+    public sealed class Startup
     {
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IMerchService, MerchService>();
-            
-            services.AddGrpc(options =>
-            {
-                options.Interceptors.Add<LoggingInterceptor>();
-            });
+
+            services.AddGrpc(options => { options.Interceptors.Add<LoggingInterceptor>(); });
         }
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseRouting();
@@ -29,7 +26,6 @@ namespace OzoneEdu.MerchandiseService
                 endpoints.MapGrpcService<MerchApiGrpcService>();
                 endpoints.MapControllers();
             });
-
         }
     }
 }

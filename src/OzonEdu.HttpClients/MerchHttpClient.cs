@@ -8,16 +8,16 @@ using OzonEdu.MerchApi.HttpModels;
 
 namespace OzonEdu.MerchApi.HttpClients
 {
-    public class MerchHttpClient : IMerchHttpClient
+    public sealed class MerchHttpClient : IMerchHttpClient
     {
         private readonly HttpClient _httpClient;
-        
+
         public MerchHttpClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
-        
-        public async  Task<MerchItemResponse> V1GetMerch(long userId, CancellationToken token)
+
+        public async Task<MerchItemResponse> V1GetMerch(long userId, CancellationToken token)
         {
             using var response = await _httpClient.GetAsync($"v1/api/merch/{userId}", token);
             var body = await response.Content.ReadAsStringAsync(token);

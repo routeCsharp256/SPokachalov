@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace OzonEdu.Infrastructure.Middlewares
 {
-    public class VersionMiddleware
+    public sealed class VersionMiddleware
     {
         public VersionMiddleware(RequestDelegate next)
         {
@@ -15,7 +15,7 @@ namespace OzonEdu.Infrastructure.Middlewares
         {
             var version = Assembly.GetEntryAssembly().GetName().Version?.ToString() ?? "no version";
             var name = Assembly.GetEntryAssembly().GetName().Name;
-            await context.Response.WriteAsync(JsonSerializer.Serialize(new { version = version, serviceName = name }));
+            await context.Response.WriteAsync(JsonSerializer.Serialize(new {version = version, serviceName = name}));
         }
     }
 }

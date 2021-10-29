@@ -1,7 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
@@ -12,7 +9,7 @@ using OzonEdu.MerchApi.HttpModels;
 
 namespace OzonEdu.MerchApi.GrpcClient
 {
-    public class MerchGrcpClient : IMerchGrcpClient
+    public sealed class MerchGrcpClient : IMerchGrcpClient
     {
         private MerchApiGrpc.MerchApiGrpcClient _client;
         private GrpcChannel _channel;

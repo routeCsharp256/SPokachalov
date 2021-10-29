@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace OzonEdu.Infrastructure.Middlewares
 {
-    public class LiveMiddleware
+    public sealed class LiveMiddleware
     {
         public LiveMiddleware(RequestDelegate next)
         {
