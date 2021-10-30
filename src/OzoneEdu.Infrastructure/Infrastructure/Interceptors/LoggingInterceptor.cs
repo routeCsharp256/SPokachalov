@@ -15,15 +15,15 @@ namespace OzonEdu.Infrastructure.Interceptors
             _logger = logger;
         }
 
-        public override Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
+        public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
             ServerCallContext context,
             UnaryServerMethod<TRequest, TResponse> continuation)
         {
             var requestJson = JsonSerializer.Serialize(request);
             _logger.LogInformation(requestJson);
-            var response = base.UnaryServerHandler(request, context, continuation);
-            var responseJson = JsonSerializer.Serialize(response);
-            _logger.LogInformation(responseJson);
+            var response = await base.UnaryServerHandler(request, context, continuation);
+            if (response!=null)
+                _logger.LogInformation(JsonSerializer.Serialize(response));
             return response;
         }
     }
