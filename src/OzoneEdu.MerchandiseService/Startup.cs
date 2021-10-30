@@ -14,7 +14,11 @@ namespace OzoneEdu.MerchandiseService
         {
             services.AddSingleton<IMerchService, MerchService>();
 
-            services.AddGrpc(options => { options.Interceptors.Add<LoggingInterceptor>(); });
+            services.AddGrpc(options =>
+            {
+                options.Interceptors.Add<ExceptionInterceptor>();
+                options.Interceptors.Add<LoggingInterceptor>();
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
