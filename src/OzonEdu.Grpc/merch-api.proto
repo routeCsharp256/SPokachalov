@@ -8,6 +8,12 @@ service MerchApiGrpc {
 
 message GetMerchItemsRequest {
   int64 user_id = 1;
+  repeated Sku sku = 2;
+  int64 type_id = 3;
+}
+
+message Sku {
+   int64 value = 1;
 }
 
 message GetMerchItemsResponse {
@@ -16,6 +22,5 @@ message GetMerchItemsResponse {
 
 message GetMerchItemResponseUnit {
   int64 item_id = 1;
-  string item_name = 2;
 }
 

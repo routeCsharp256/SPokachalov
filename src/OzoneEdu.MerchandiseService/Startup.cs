@@ -13,6 +13,8 @@ namespace OzoneEdu.MerchandiseService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IMerchService, MerchService>();
+            services.AddInfrastructureServices();
+            services.AddInfrastructureRepositories();
 
             services.AddGrpc(options =>
             {

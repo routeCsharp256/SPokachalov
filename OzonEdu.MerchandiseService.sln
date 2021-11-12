@@ -30,6 +30,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OzonEdu.HttpModels", "src\O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OzonEdu.HttpClients", "src\OzonEdu.HttpClients\OzonEdu.HttpClients.csproj", "{99B15597-7636-4737-AAC6-1C6143CCCC52}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OzonEdu.MerchApi.Domain", "src\OzonEdu.MerchApi.Domain\OzonEdu.MerchApi.Domain.csproj", "{15585EB9-8034-4017-BF23-0CEEF3DB5DA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OzonEdu.MerchApi.Domain.Tests", "tests\OzonEdu.MerchApi.Domain.Tests\OzonEdu.MerchApi.Domain.Tests.csproj", "{3A512F71-7353-4183-9300-282B5E1907F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +46,8 @@ Global
 		{962B141F-52E2-4790-B21E-35CF9D54A7FD} = {FD5FA813-6CD0-4581-B3F6-9AFA6EDA3046}
 		{632C213A-1E1A-42D1-956A-6192E0066B85} = {FD5FA813-6CD0-4581-B3F6-9AFA6EDA3046}
 		{99B15597-7636-4737-AAC6-1C6143CCCC52} = {FD5FA813-6CD0-4581-B3F6-9AFA6EDA3046}
+		{15585EB9-8034-4017-BF23-0CEEF3DB5DA7} = {FD5FA813-6CD0-4581-B3F6-9AFA6EDA3046}
+		{3A512F71-7353-4183-9300-282B5E1907F8} = {AA7C3F33-23DE-4BC8-9BEB-0E3B0CF1EEC1}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{7A88CD18-AF45-4FF3-AC46-817FACF0C59F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -68,5 +74,13 @@ Global
 		{99B15597-7636-4737-AAC6-1C6143CCCC52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99B15597-7636-4737-AAC6-1C6143CCCC52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99B15597-7636-4737-AAC6-1C6143CCCC52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15585EB9-8034-4017-BF23-0CEEF3DB5DA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15585EB9-8034-4017-BF23-0CEEF3DB5DA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15585EB9-8034-4017-BF23-0CEEF3DB5DA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15585EB9-8034-4017-BF23-0CEEF3DB5DA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A512F71-7353-4183-9300-282B5E1907F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A512F71-7353-4183-9300-282B5E1907F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A512F71-7353-4183-9300-282B5E1907F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A512F71-7353-4183-9300-282B5E1907F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
