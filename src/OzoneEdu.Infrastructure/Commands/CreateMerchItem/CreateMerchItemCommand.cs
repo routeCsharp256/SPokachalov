@@ -3,7 +3,7 @@ using MediatR;
 
 namespace OzonEdu.Infrastructure.Commands
 {
-    public sealed class CreateMerchItemCommand : IRequest<bool>
+    public sealed class CreateMerchItemCommand : IRequest<int>
     {
       
         public List<long> Sku { get; init; }
@@ -14,6 +14,5 @@ namespace OzonEdu.Infrastructure.Commands
         
         public long IssueTypeId { get; init; }
 
-        public bool IsDone { get; init; }
     }
 }

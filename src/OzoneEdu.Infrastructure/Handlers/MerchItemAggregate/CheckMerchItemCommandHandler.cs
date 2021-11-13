@@ -12,7 +12,7 @@ using OzonEdu.MerchApi.Domain.AggregationModels.MerchPackAggregate;
 using OzonEdu.MerchApi.Domain.AggregationModels.ValueObjects;
 
 
-namespace OzonEdu.Infrastructure.Handlers.DeliveryRequestAggregate
+namespace OzonEdu.Infrastructure.Handlers.MerchItemAggregate
 {
     public class CheckMerchItemCommandHandler : IRequestHandler<CheckMerchItemCommand, bool>
     {
@@ -35,7 +35,7 @@ namespace OzonEdu.Infrastructure.Handlers.DeliveryRequestAggregate
             var someTypeMerch = (await _merchItemRepository.FindByCustomerIdAsync(merchItem.MerchCustomerId))
                 .Where(x => x.Pack.Equals(merchPack)).OrderByDescending(x => x.ConfirmDate)
                 .FirstOrDefault();
-            if (DateTime.Now.AddYears(-1) <= someTypeMerch.ConfirmDate.Value)
+            if (someTypeMerch != null && DateTime.Now.AddYears(-1) <= someTypeMerch.ConfirmDate.Value)
                 throw new AlreadyIssuedException("Набор уже выдавался");
             return true;
         }

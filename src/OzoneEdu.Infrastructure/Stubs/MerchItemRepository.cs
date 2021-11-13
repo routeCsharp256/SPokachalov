@@ -13,11 +13,18 @@ namespace OzonEdu.MerchApi.Infrastructure.Stubs
     public class MerchItemRepository : IMerchItemRepository
     {
         public IUnitOfWork UnitOfWork { get; }
-        public Task<MerchItem> CreateAsync(MerchItem itemToCreate, CancellationToken cancellationToken = default)
+
+        public MerchItemRepository()
         {
-            throw new System.NotImplementedException();
+            UnitOfWork = new UnitOfWork();
+        }
+        public  async Task<MerchItem> CreateAsync(MerchItem itemToCreate, CancellationToken cancellationToken = default)
+        {
+            return itemToCreate;
         }
 
+        
+        
         public Task<MerchItem> UpdateAsync(MerchItem itemToUpdate, CancellationToken cancellationToken = default)
         {
             throw new System.NotImplementedException();
