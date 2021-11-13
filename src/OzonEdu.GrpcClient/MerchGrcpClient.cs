@@ -26,7 +26,7 @@ namespace OzonEdu.MerchApi.GrpcClient
             var grcpMerch = await _client.GetMerchAsync(new GetMerchItemsRequest() {UserId = userId});
             return new MerchItemResponse()
             {
-                ItemId = grcpMerch.ItemId, ItemName = grcpMerch.ItemName
+                ItemId = grcpMerch.ItemId
             };
         }
 
@@ -38,8 +38,7 @@ namespace OzonEdu.MerchApi.GrpcClient
             foreach (var getMerchItemResponseUnit in grcpMerchList.MerchItems)
                 merchList.Add(new MerchItemResponse()
                 {
-                    ItemId = getMerchItemResponseUnit.ItemId,
-                    ItemName = getMerchItemResponseUnit.ItemName
+                    ItemId = getMerchItemResponseUnit.ItemId
                 });
             return merchList;
         }

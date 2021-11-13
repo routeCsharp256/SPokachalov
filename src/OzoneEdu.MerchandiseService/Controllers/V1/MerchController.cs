@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using OzonEdu.MerchandiseService.Models;
 using OzonEdu.MerchandiseService.Services.Interfaces;
 using OzonEdu.MerchApi.HttpModels;
 
@@ -20,18 +21,24 @@ namespace OzoneEdu.MerchandiseService.Controllers.V1
             _service = service;
         }
 
-        [HttpGet("{id:long}")]
-        public async Task<ActionResult<MerchItemResponse>> GetMerch(long id, CancellationToken token)
+        [HttpGet("{merchTypeId:int}")]
+        public async Task<ActionResult<MerchItemResponse>> GetMerch(int merchTypeId,
+            [FromQuery]MerchItemRequest request, 
+            CancellationToken token)
         {
-            var merchItem = await _service.GetMerch(id, token);
-            if (merchItem is null)
-                return new MerchItemResponse();
+            var merchId = await _service.CreateMerch(request.MerchCustomerId, request.Sku,
+                (long)merchTypeId,
+                (long)IssueType.Manual, token);
+            bool isDone = false;
+            isDone = await _service.CheckMerch(request.MerchCustomerId, merchTypeId, token);
+            isDone = await _service.CheckAvailableStokMerch(request.Sku, token);
+            isDone = await _service.ReserveOnStokMerch(request.Sku, token);
 
-            return new MerchItemResponse()
-            {
-                ItemId = merchItem.ItemId,
-                ItemName = merchItem.ItemName
-            };
+            var merchReq = await _service.SetConfirmStatusMerch(merchId, isDone, token);
+            if (merchReq)
+                return Ok(new MerchItemResponse(){ItemId = merchTypeId});
+            else
+                return BadRequest();
         }
 
         [HttpGet("info/{id:long}")]
@@ -44,7 +51,6 @@ namespace OzoneEdu.MerchandiseService.Controllers.V1
             return merchItem.Select(x => new MerchItemResponse()
             {
                 ItemId = x.ItemId,
-                ItemName = x.ItemName
             }).ToList();
             ;
         }
