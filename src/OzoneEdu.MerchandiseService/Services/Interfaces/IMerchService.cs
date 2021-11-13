@@ -7,8 +7,9 @@ namespace OzonEdu.MerchandiseService.Services.Interfaces
 {
     public interface IMerchService
     {
-        public Task<bool> GetMerch(long userId, List<long> skuList, long merchTypeId, long issuedType,
-            bool isDone,
+        public  Task<int> CreateMerch(long userId, List<long> skuList, long merchTypeId, long issuedType,
+            CancellationToken cancelationToken);
+        public  Task<bool> SetConfirmStatusMerch(long merchId, bool isDone,
             CancellationToken cancelationToken);
         Task<List<MerchItem>> GetMerchesByUserId(long userId, CancellationToken token);
         public Task<bool> CheckMerch(int userId, int packId, CancellationToken cancelationToken);

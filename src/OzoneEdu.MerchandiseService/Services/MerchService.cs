@@ -19,10 +19,9 @@ namespace OzoneEdu.MerchandiseService.Services
         }
 
         /// <summary>
-        /// Выдача мерча по запросу
+        /// Создание мерча по запросу
         /// </summary>
-        public async Task<bool> GetMerch(long userId, List<long> skuList, long merchTypeId, long issuedType,
-            bool isDone,
+        public async Task<int> CreateMerch(long userId, List<long> skuList, long merchTypeId, long issuedType,
             CancellationToken cancelationToken)
         {
             var command = new CreateMerchItemCommand()
@@ -31,12 +30,27 @@ namespace OzoneEdu.MerchandiseService.Services
                 MerchPackTypeId = merchTypeId,
                 MerchCustomerId = userId,
                 IssueTypeId = issuedType,
-                IsDone = isDone
             };
             var res = await _mediator.Send(command, cancelationToken);
             return res;
         }
 
+        /// <summary>
+        /// Установка статуса выполнено
+        /// </summary>
+        public async Task<bool> SetConfirmStatusMerch(long merchId, bool isDone,
+            CancellationToken cancelationToken)
+        {
+            var command = new SetStatusMerchItemCommand()
+            {
+                Status = isDone,
+                MerchId = merchId,
+            };
+            var res = await _mediator.Send(command, cancelationToken);
+            return res;
+        }
+        
+        
         /// <summary>
         /// Возвращает информацию о выданных мерчах  по сотруднику
         /// </summary>

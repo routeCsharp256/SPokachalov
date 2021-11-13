@@ -25,16 +25,17 @@ namespace OzoneEdu.MerchandiseService.GrpcServices
             foreach (var item in request.Sku)
                 skuList.Add(item.Value);
 
+            var merchId = await _service.CreateMerch(request.UserId,
+                skuList,
+                request.TypeId,
+                (long) IssueType.Manual,
+                context.CancellationToken);
+            
             isDone = await _service.CheckMerch((int) request.UserId, (int) request.TypeId, context.CancellationToken);
             isDone = await _service.CheckAvailableStokMerch(skuList, context.CancellationToken);
             isDone = await _service.ReserveOnStokMerch(skuList.ToList<long>(), context.CancellationToken);
 
-            var merch = await _service.GetMerch(request.UserId,
-                skuList,
-                request.TypeId,
-                (long) IssueType.Manual,
-                isDone,
-                context.CancellationToken);
+            var merch = await _service.SetConfirmStatusMerch(merchId, isDone,context.CancellationToken);
             if (merch)
                 return new GetMerchItemResponseUnit()
                 {

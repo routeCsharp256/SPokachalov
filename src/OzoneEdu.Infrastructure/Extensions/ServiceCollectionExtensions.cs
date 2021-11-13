@@ -1,7 +1,7 @@
 ﻿using System;
 using MediatR;
 using OzonEdu.Infrastructure.Commands;
-using OzonEdu.Infrastructure.Handlers.DeliveryRequestAggregate;
+using OzonEdu.Infrastructure.Handlers.MerchItemAggregate;
 using OzonEdu.MerchApi.Domain.AggregationModels.CustomerAggregate;
 using OzonEdu.MerchApi.Domain.AggregationModels.MerchItemRequest;
 using OzonEdu.MerchApi.Domain.AggregationModels.MerchPackAggregate;
@@ -26,7 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddMediatR(typeof(CreateStockItemRequestCommand).Assembly);
             services.AddMediatR(typeof(CreateStockItemAvailableRequestCommand).Assembly);
             services.AddMediatR(typeof(CreateStockItemAvailableRequestCommand).Assembly);
-
+            services.AddMediatR(typeof(SetStatusMerchItemCommand).Assembly);
             return services;
         }
 

@@ -23,18 +23,18 @@ namespace OzoneEdu.MerchandiseService.Controllers.V1
 
         [HttpGet("{merchTypeId:int}")]
         public async Task<ActionResult<MerchItemResponse>> GetMerch(int merchTypeId,
-            [FromBody] MerchItemRequest request, 
+            [FromQuery]MerchItemRequest request, 
             CancellationToken token)
         {
+            var merchId = await _service.CreateMerch(request.MerchCustomerId, request.Sku,
+                (long)merchTypeId,
+                (long)IssueType.Manual, token);
             bool isDone = false;
             isDone = await _service.CheckMerch(request.MerchCustomerId, merchTypeId, token);
             isDone = await _service.CheckAvailableStokMerch(request.Sku, token);
             isDone = await _service.ReserveOnStokMerch(request.Sku, token);
-            
-            var merchReq = await _service.GetMerch(request.MerchCustomerId, request.Sku,
-                (long)merchTypeId,
-                (long)IssueType.Manual, 
-                isDone, token);
+
+            var merchReq = await _service.SetConfirmStatusMerch(merchId, isDone, token);
             if (merchReq)
                 return Ok(new MerchItemResponse(){ItemId = merchTypeId});
             else

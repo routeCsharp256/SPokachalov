@@ -14,7 +14,7 @@ using OzonEdu.MerchApi.Domain.AggregationModels.MerchPackAggregate;
 using OzonEdu.MerchApi.Domain.AggregationModels.ValueObjects;
 
 
-namespace OzonEdu.Infrastructure.Handlers.DeliveryRequestAggregate
+namespace OzonEdu.Infrastructure.Handlers.MerchItemAggregate
 {
     public class GetIssuedMerchPacksQueryHandler : IRequestHandler<GetIssuedMerchPacksQuery, List<MerchItem>>
     {
