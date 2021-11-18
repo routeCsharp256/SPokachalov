@@ -1,9 +1,11 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Dapper;
 using Npgsql;
 using OzonEdu.MerchApi.Domain.AggregationModels.CustomerAggregate;
-using OzonEdu.MerchApi.Domain.Contracts;
 using OzonEdu.MerchApi.Infrastructure.DAL.Infrastructure.Interfaces;
+using OzonEdu.MerchApi.Infrastructure.DAL.Models;
 
 namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
 {
@@ -31,19 +33,56 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
 
         public async Task<MerchCustomer> FindByIdAsync(long id, CancellationToken cancellationToken = default)
         {
-            var customer = new MerchCustomer(new MailCustomer("goolgemoogle@ggg.com")
-                , new NameCustomer("Пиндриков А.А"));
-            var enoterCustomer = new MerchCustomer(new MailCustomer("goolgemoogle@ggg.com")
-                , new NameCustomer("Егоров Л.В"));
-            if (id > 100)
-                 return customer;
-            else 
-                return enoterCustomer;
+            const string sql = @"
+                SELECT  * FROM customer  WHERE customer.id = @Id;";
+            
+            var parameters = new
+            {
+                Id = id
+            };
+            CommandDefinition commandDefinition = new CommandDefinition(
+                sql,
+                parameters: parameters,
+                commandTimeout: Timeout,
+                cancellationToken: cancellationToken);
+            
+            var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
+
+            var customer = await connection.QueryAsync<Customer>(commandDefinition);
+            var merchCustomer =   customer.Select(
+                x => new MerchCustomer((int)x.Id, new MailCustomer(x.Mail),
+                    new NameCustomer(x.Name), new MailCustomer(x.MentorMail),
+                    new NameCustomer(x.MentorName)));
+          
+            _changeTracker.Track(merchCustomer.First());
+            return merchCustomer.FirstOrDefault();
         }
 
-        public Task<MerchCustomer> FindByMailAsync(MailCustomer mailCustomer, CancellationToken cancellationToken = default)
+        public async Task<MerchCustomer> FindByMailAsync(MailCustomer mailCustomer, CancellationToken cancellationToken = default)
         {
-            throw new System.NotImplementedException();
+            const string sql = @" SELECT  * FROM customer  WHERE customer.mail = @mail;";
+            
+            var parameters = new
+            {
+                mail = mailCustomer.Value
+            };
+            
+            CommandDefinition commandDefinition = new CommandDefinition(
+                sql,
+                parameters: parameters,
+                commandTimeout: Timeout,
+                cancellationToken: cancellationToken);
+            
+            var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
+
+            var customer = await connection.QueryAsync<Customer>(commandDefinition);
+            var merchCustomer =   customer.Select(
+                x => new MerchCustomer((int)x.Id, new MailCustomer(x.Mail),
+                    new NameCustomer(x.Name), new MailCustomer(x.MentorMail),
+                    new NameCustomer(x.MentorName)));
+          
+            _changeTracker.Track(merchCustomer.First());
+            return merchCustomer.First();
         }
     }
 }

@@ -7,6 +7,7 @@
     <ItemGroup>
       <ProjectReference Include="..\OzonEdu.Grpc\OzonEdu.Grpc.csproj" />
       <ProjectReference Include="..\OzonEdu.HttpModels\OzonEdu.HttpModels.csproj" />
+      <ProjectReference Include="..\OzonEdu.MerchApi.Migrator\OzonEdu.MerchApi.Migrator.csproj" />
       <ProjectReference Include="..\OzoneEdu.Infrastructure\OzoneEdu.Infrastructure.csproj" />
     </ItemGroup>
 

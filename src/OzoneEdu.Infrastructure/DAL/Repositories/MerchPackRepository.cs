@@ -36,17 +36,7 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
 
         public async Task<MerchPack> FindByIdAsync(long id, CancellationToken cancellationToken = default)
         {
-            var type = MerchPackType.GetAll<MerchPackType>().FirstOrDefault();
-            var items = new List<FillingItem>();
-            items.Add(new FillingItem(FillingItemType.Pen, (new List<Sku>()
-            {
-                new Sku(123), new Sku(66), new Sku(12)
-            }).AsReadOnly()));
-            items.Add(new FillingItem(FillingItemType.Notepad, (new List<Sku>()
-            {
-                new Sku(78), new Sku(6645), new Sku(142)
-            }).AsReadOnly()));
-            return new MerchPack(type: new MerchType(type), items);
+            throw new System.NotImplementedException();
         }
 
         public async Task<MerchPack> FindByMerchTypeAsync(MerchType merchType,
