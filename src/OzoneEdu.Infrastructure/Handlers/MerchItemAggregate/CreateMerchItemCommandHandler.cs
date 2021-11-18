@@ -9,6 +9,8 @@ using OzonEdu.MerchApi.Domain.AggregationModels.MerchItemAggregate;
 using OzonEdu.MerchApi.Domain.AggregationModels.MerchItemRequest;
 using OzonEdu.MerchApi.Domain.AggregationModels.MerchPackAggregate;
 using OzonEdu.MerchApi.Domain.AggregationModels.ValueObjects;
+using OzonEdu.MerchApi.Domain.Contracts;
+using OzonEdu.MerchApi.Infrastructure.DAL.Infrastructure;
 
 
 namespace OzonEdu.Infrastructure.Handlers.MerchItemAggregate
@@ -18,10 +20,12 @@ namespace OzonEdu.Infrastructure.Handlers.MerchItemAggregate
         public readonly IMerchItemRepository _merchItemRepository;
         public readonly IMerchItemCustomerRepository _customerRepository;
         public readonly IMerchPackRepository _merchPackRepository;
+        public readonly IUnitOfWork _unitOfWork;
 
         public CreateMerchItemCommandHandler(IMerchItemRepository merchItemRepository,
             IMerchItemCustomerRepository customerRepository,
-            IMerchPackRepository merchPackRepository)
+            IMerchPackRepository merchPackRepository,
+            IUnitOfWork unitOfWork)
         {
             _merchItemRepository = merchItemRepository ??
                                    throw new ArgumentNullException($"{nameof(merchItemRepository)}");
@@ -29,6 +33,9 @@ namespace OzonEdu.Infrastructure.Handlers.MerchItemAggregate
                                   throw new ArgumentNullException($"{nameof(customerRepository)}");
             _merchPackRepository = merchPackRepository ??
                                    throw new ArgumentNullException($"{nameof(merchPackRepository)}");
+            _unitOfWork = unitOfWork ?? 
+                          throw new ArgumentNullException($"{nameof(unitOfWork)}");
+
         }
 
         public async Task<int> Handle(CreateMerchItemCommand merchItem, CancellationToken cancellationToken)
@@ -39,7 +46,7 @@ namespace OzonEdu.Infrastructure.Handlers.MerchItemAggregate
                 issueType: IssueType.GetAll<IssueType>().FirstOrDefault(x => x.Id == merchItem.IssueTypeId),
                 skuList: merchItem.Sku.Select(it => new Sku(it)).ToList()); 
             item = await _merchItemRepository.CreateAsync(item, cancellationToken);
-            await _merchItemRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+            await _unitOfWork.SaveEntitiesAsync(cancellationToken);
             return item.Id;
         }
     }

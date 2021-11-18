@@ -10,7 +10,17 @@ services:
     ports:
       - "80:80"
       - "443:443"
-  
+  merchendise-service-db:
+    image: postgres:latest
+    hostname: 'merchendise-service-db'
+    ports:
+      - "5426:5426"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: merch-api
+    command: "-c log_statement=all"
+     
   employees-service:
     hostname: 'employees-service'
     image: 'ghcr.io/ozon-edu-csharp-2021/employees-service:main'
