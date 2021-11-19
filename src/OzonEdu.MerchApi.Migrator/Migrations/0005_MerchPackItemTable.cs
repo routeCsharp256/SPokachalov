@@ -13,7 +13,7 @@ namespace OzonEdu.MerchApi.Migrator.Migrations
        Execute.Sql(@"CREATE TABLE IF NOT EXISTS merch_pack_items
             (
                 Id bigserial NOT NULL,
-                Name integer NOT NULL DEFAULT 0,
+                Name varchar(150) NOT NULL DEFAULT 0,
                 CONSTRAINT PK_merch_pack_tems PRIMARY KEY(Id)
             );");
         }

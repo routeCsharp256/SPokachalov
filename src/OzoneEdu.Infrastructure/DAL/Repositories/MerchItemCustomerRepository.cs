@@ -34,7 +34,8 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
         public async Task<MerchCustomer> FindByIdAsync(long id, CancellationToken cancellationToken = default)
         {
             const string sql = @"
-                SELECT  * FROM customer  WHERE customer.id = @Id;";
+                SELECT customer.id,customer.mail, customer.name, customer.mentormail, customer.mentorname
+                from customers customer where id = @Id;";
             
             var parameters = new
             {
@@ -60,7 +61,9 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
 
         public async Task<MerchCustomer> FindByMailAsync(MailCustomer mailCustomer, CancellationToken cancellationToken = default)
         {
-            const string sql = @" SELECT  * FROM customer  WHERE customer.mail = @mail;";
+            const string sql = @" 
+                SELECT customer.id,customer.mail, customer.name, customer.mentormail, customer.mentorname
+                from customers customer where mail = @mail;";
             
             var parameters = new
             {

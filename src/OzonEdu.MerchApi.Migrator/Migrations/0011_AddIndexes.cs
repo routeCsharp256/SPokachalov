@@ -7,8 +7,7 @@ namespace OzonEdu.MerchApi.Migrator.Migrations
     {
         public override void Up()
         {
-            Execute.Sql(@"
-               -- CREATE INDEX CONCURRENTLY stocks_sku_id_idx ON stocks (sku_id)"
+            Execute.Sql(@"-- "
             );
         }
     }
