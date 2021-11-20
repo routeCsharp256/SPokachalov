@@ -29,14 +29,14 @@ namespace OzoneEdu.MerchandiseService
         public void ConfigureServices(IServiceCollection services)
         {
          
-            services.AddSingleton<IMerchService, MerchService>();
             services.AddMediatR(typeof(Startup), typeof(DatabaseConnectionOptions));
             services.AddInfrastructureServices();
             services.Configure<DatabaseConnectionOptions>(Configuration.GetSection(nameof(DatabaseConnectionOptions)));
             services.AddScoped<IDbConnectionFactory<NpgsqlConnection>, NpgsqlConnectionFactory>();
-            services.AddScoped<OzonEdu.MerchApi.Domain.Contracts.IUnitOfWork, OzonEdu.MerchApi.Infrastructure.DAL.Infrastructure.UnitOfWork>();
             services.AddScoped<IChangeTracker, ChangeTracker>();
             services.AddInfrastructureRepositories();
+            services.AddScoped<IMerchService, MerchService>();
+
             services.AddGrpc(options =>
             {
                 options.Interceptors.Add<ExceptionInterceptor>();
