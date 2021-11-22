@@ -26,13 +26,14 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
             IChangeTracker changeTracker)
         {
             _dbConnectionFactory = dbConnectionFactory;
-            _changeTracker = changeTracker;   
+            _changeTracker = changeTracker;
         }
-        public  async Task<MerchItem> CreateAsync(MerchItem itemToCreate, CancellationToken cancellationToken = default)
+
+        public async Task<MerchItem> CreateAsync(MerchItem itemToCreate, CancellationToken cancellationToken = default)
         {
             return itemToCreate;
         }
-        
+
         public Task<MerchItem> UpdateAsync(MerchItem itemToUpdate, CancellationToken cancellationToken = default)
         {
             throw new System.NotImplementedException();
@@ -41,11 +42,13 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
         public async Task<MerchItem> FindByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             const string sql = @"
-            SELECT item.id, item.orderdate,item.confirmdate,
-            customer.id, customer.mail,customer.mentormail,customer.mentorname,customer.name,
-            status.id, status.name, 
-            issuetype.id, issuetype.name,
-            sku.id,merchpack.id, merchpack.name, items.id, items.name, merchsku.id
+            SELECT item.id as MerchItemId, item.orderdate,item.confirmdate,
+            customer.id as CustomerId, customer.mail as CustomerMail, customer.mentormail as CustomerMentorMail,customer.mentorname as CustomerMentorName,
+            customer.name as CustomerName,
+            status.id as StatusId, status.name as StatusName, 
+            issuetype.id as IssueTypeId, issuetype.name as IssueTypeName,
+            sku.id as SkuId, merchpack.id as MerchPackId, merchpack.name as MerchPackName, items.id as MerchPackItemId,
+            items.name as MerchPackItemName,  merchsku.id as MerchItemSku
             from merch_items item 
             join customers customer on customer.id = item.customerid
             join merch_status status on status.id = item.statusid
@@ -66,51 +69,54 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
                 commandTimeout: Timeout,
                 cancellationToken: cancellationToken);
             var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
-            var merchItem = await connection.QueryAsync<
-                List<Models.MerchItem>, 
-                List<Models.Customer>,
-                List<Models.Sku>, 
-                List<Models.IssueType>,
-                List<Models.MerchPack>, List<Models.MerchPackItem>,List<Models.Sku>,MerchItem>
+            var merchItem = await connection.QueryAsync<Models.MerchItem,
+                Models.Customer,
+                List<Models.Sku>,
+                Models.IssueType,
+                Models.MerchPack, List<Models.MerchPackItem>, List<Models.Sku>, MerchItem>
             (commandDefinition,
-                (merchitem, customer,skus, issuetype,
-                        merchpacks,merchpackitems,merchpackitemscus) => 
+                (merchitem, customer, skus, issuetype,
+                        merchpacks, merchpackitems, merchpackitemscus) =>
                     new MerchItem(
-                        (int)merchitem.FirstOrDefault().Id, 
+                        (int) merchitem.MerchItemId,
                         new MerchCustomer(
-                            (int)customer.FirstOrDefault().Id,
-                            new MailCustomer(customer.FirstOrDefault().Mail),
-                            new NameCustomer(customer.FirstOrDefault().Name),
-                            new MailCustomer(customer.FirstOrDefault().MentorMail),
-                            new NameCustomer(customer.FirstOrDefault().MentorName)
-                            ),
+                            (int) customer.CustomerId,
+                            new MailCustomer(customer.CustomerMail),
+                            new NameCustomer(customer.CustomerName),
+                            new MailCustomer(customer.CustomerMentorMail),
+                            new NameCustomer(customer.CustomerMentorName)
+                        ),
                         new MerchPack(
-                            (int) merchpacks.FirstOrDefault().Id,
-                            new MerchType(new MerchPackType((int)merchpacks.FirstOrDefault().Id, merchpacks.FirstOrDefault().Name)),
+                            (int) merchpacks.MerchPackId,
+                            new MerchType(new MerchPackType((int) merchpacks.MerchPackId, merchpacks.MerchPackName)),
                             merchpackitems.Select(
-                                    i=>new FillingItem((int)i.Id, new FillingItemType((int)i.Id,i.Name), 
+                                    i => new FillingItem((int) i.MerchPackItemId,
+                                        new FillingItemType((int) i.MerchPackItemId, i.MerchPackItemName),
                                         merchpackitemscus.Select(
-                                                s=>new OzonEdu.MerchApi.Domain.AggregationModels.ValueObjects.Sku((long)s.Id))
+                                                s => new OzonEdu.MerchApi.Domain.AggregationModels.ValueObjects.Sku(
+                                                    (long) s.SkuId))
                                             .ToList().AsReadOnly()))
                                 .ToList().AsReadOnly()
                         ),
-                        skus.Select(s=> new Sku(s.Id)).ToList().AsReadOnly(),
-                        new IssueType((int)issuetype.FirstOrDefault().Id,issuetype.FirstOrDefault().Name)
-                        )
+                        skus.Select(s => new Sku(s.SkuId)).ToList().AsReadOnly(),
+                        new IssueType((int) issuetype.IssueTypeId, issuetype.IssueTypeName)
+                    )
             );
-            
+
             _changeTracker.Track(merchItem.FirstOrDefault());
             return merchItem.FirstOrDefault();
         }
 
         public async Task<List<MerchItem>> FindByCustomerIdAsync(int id, CancellationToken cancellationToken = default)
         {
-           const string sql = @"
-            SELECT item.id, item.orderdate,item.confirmdate,
-            customer.id, customer.mail,customer.mentormail,customer.mentorname,customer.name,
-            status.id, status.name, 
-            issuetype.id, issuetype.name,
-            sku.id,merchpack.id, merchpack.name, items.id, items.name, merchsku.id
+            const string sql = @"
+           SELECT item.id as MerchItemId, item.orderdate,item.confirmdate,
+            customer.id as CustomerId, customer.mail as CustomerMail, customer.mentormail as CustomerMentorMail,customer.mentorname as CustomerMentorName,
+                   customer.name as CustomerName,
+            status.id as StatusId, status.name as MerchStatusName, 
+            issuetype.id as IssueTypeId, issuetype.name as IssueTypeName,
+            sku.id as SkuId, merchpack.id as MerchPackId, merchpack.name as MerchPackName, items.id as MerchPackItemId,
+            items.name as MerchPackItemName,  merchsku.id as MerchItemSku
             from merch_items item 
             left join customers customer on customer.id = item.customerid
             left join merch_status status on status.id = item.statusid
@@ -122,9 +128,9 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
             left join merch_pack_items items on packs.merchpackitemid = items.id
             left join merch_pack_items_skus itemskus on itemskus.merchpackitemid = items.id
             left join skus merchsku on merchsku.id = itemskus.skuid 
-            where  customer.id = @Id";
+            where  MerchItemId = @MerchItemId";
 
-            var parameters = new {Id = id};
+            var parameters = new {MerchItemId = id};
             var commandDefinition = new CommandDefinition(
                 sql,
                 parameters: parameters,
@@ -132,41 +138,45 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
                 cancellationToken: cancellationToken);
             var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
             var merchItem = await connection.QueryAsync<
-                Models.MerchItem, 
+                Models.MerchItem,
                 Models.Customer,
-               List<Models.Sku>, 
+                List<Models.Sku>,
                 Models.IssueType,
-                Models.MerchPack, List<Models.MerchPackItem>,List<Models.Sku>,MerchItem>
+                Models.MerchPack, List<Models.MerchPackItem>, List<Models.Sku>, MerchItem>
             (commandDefinition,
-                (merchitem, customer,skus, issuetype,
-                        merchpacks,merchpackitems,merchpackitemscus) => 
+                (merchitem, customer, skus, issuetype,
+                        merchpacks, merchpackitems, merchpackitemscus) =>
                     new MerchItem(
-                        (int)merchitem.Id, 
+                        (int) merchitem.MerchItemId,
                         new MerchCustomer(
-                            (int)customer.Id,
-                            new MailCustomer(customer.Mail),
-                            new NameCustomer(customer.Name),
-                            new MailCustomer(customer.MentorMail),
-                            new NameCustomer(customer.MentorName)
-                            ),
+                            (int) customer.CustomerId,
+                            new MailCustomer(customer.CustomerMail),
+                            new NameCustomer(customer.CustomerName),
+                            new MailCustomer(customer.CustomerMentorMail),
+                            new NameCustomer(customer.CustomerMentorName)
+                        ),
                         new MerchPack(
-                            (int) merchpacks.Id,
-                            new MerchType(new MerchPackType((int)merchpacks.Id, merchpacks.Name)),
+                            (int) merchpacks.MerchPackId,
+                            new MerchType(new MerchPackType((int) merchpacks.MerchPackId, merchpacks.MerchPackName)),
                             merchpackitems.Select(
-                                    i=>new FillingItem((int)i.Id, new FillingItemType((int)i.Id,i.Name), 
+                                    i => new FillingItem((int) i.MerchPackItemId,
+                                        new FillingItemType((int) i.MerchPackItemId, i.MerchPackItemName),
                                         merchpackitemscus.Select(
-                                                s=>new OzonEdu.MerchApi.Domain.AggregationModels.ValueObjects.Sku((long)s.Id))
+                                                s => new OzonEdu.MerchApi.Domain.AggregationModels.ValueObjects.Sku(
+                                                    (long) s.SkuId))
                                             .ToList().AsReadOnly()))
                                 .ToList().AsReadOnly()
                         ),
-                        skus.Select(s=> new Sku(s.Id)).ToList().AsReadOnly(),
-                        new IssueType((int)issuetype.Id,issuetype.Name)
+                        skus.Select(s => new Sku(s.SkuId)).ToList().AsReadOnly(),
+                        new IssueType((int) issuetype.IssueTypeId, issuetype.IssueTypeName)
                         )
-            );
+                , splitOn:"Id,Id,Id,Id,Id,Id,Id,Id,Id"
+                );
             foreach (var item in merchItem)
             {
                 _changeTracker.Track(item);
             }
+
             return merchItem.ToList();
         }
     }

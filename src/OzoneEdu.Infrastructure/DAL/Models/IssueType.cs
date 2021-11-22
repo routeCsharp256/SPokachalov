@@ -2,7 +2,7 @@
 {
     public sealed class IssueType 
     {
-        public long Id { get; set; }
-        public string Name { get; set; }
+        public long IssueTypeId { get; set; }
+        public string IssueTypeName { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 {
     public class MerchStatus
     {
-        public long Id { get; set; }
-        public string Name { get; set; }
+        public long MerchStatusId { get; set; }
+        public string MerchStatusName { get; set; }
     }
 }

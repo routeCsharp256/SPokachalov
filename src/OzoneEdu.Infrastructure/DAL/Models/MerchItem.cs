@@ -4,13 +4,13 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Models
 {
     public class MerchItem
     {
-        public long Id { get; set; }
+        public long MerchItemId { get; set; }
         public long MerchPackId { get; set; }
         public long CustomerId { get; set; }
         public long StatusId { get; set; }
-        public long IssueTypeid { get; set; }
-        public DateTime OrderDate { get; set; }
-        public DateTime? ConfirmDate { get; set; }
-        public string  Description { get; set; }
+        public long IssueTypeId { get; set; }
+        public DateTime MerchItemOrderDate { get; set; }
+        public DateTime? MerchItemConfirmDate { get; set; }
+        public string  MerchItemDescription { get; set; }
     }
 }

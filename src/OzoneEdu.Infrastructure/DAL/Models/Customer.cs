@@ -2,10 +2,10 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Models
 {
     public sealed class Customer
     {
-        public long Id { get; set; }
-        public string Mail { get; set; }
-        public string Name { get; set; }
-        public string MentorMail { get; set; }
-        public string MentorName { get; set; }
+        public long CustomerId { get; set; }
+        public string CustomerMail { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerMentorMail { get; set; }
+        public string CustomerMentorName { get; set; }
     }
 }

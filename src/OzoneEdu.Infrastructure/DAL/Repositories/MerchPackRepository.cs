@@ -41,7 +41,8 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
         public async Task<MerchPack> FindByIdAsync(long id, CancellationToken cancellationToken = default)
         {
             const string sql = @"
-               SELECT merchpack.id, merchpack.name, item.id, item.name, sku.id, sku.name, sku.description from merch_pack_items item 
+               SELECT merchpack.id as MerchPackId, merchpack.name as MerchPacName,
+                      item.id, item.name, sku.id, sku.name, sku.description from merch_pack_items item 
                 join merch_packs_items packs on item.id = packs.merchpackitemid
                 join merch_packs merchpack on merchpack.id = packs.merchpackid
                 join merch_pack_items_skus itemskus on itemskus.merchpackitemid = item.id
@@ -58,12 +59,15 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
             var merchPack = await connection.QueryAsync<
                 List<Models.MerchPack>, List<Models.MerchPackItem>,List<Models.Sku>, MerchPack>
             (commandDefinition,
-                (merchpacks, packItems,skus) => new MerchPack((int) merchpacks.FirstOrDefault().Id,
-                    new MerchType(new MerchPackType((int)merchpacks.FirstOrDefault().Id, merchpacks.FirstOrDefault().Name)),
+                (merchpacks, 
+                    packItems,skus) => new MerchPack((int) merchpacks.FirstOrDefault().MerchPackId,
+                    new MerchType(new MerchPackType((int)merchpacks.FirstOrDefault().MerchPackId,
+                        merchpacks.FirstOrDefault().MerchPackName)),
                     packItems.Select(
-                            i=>new FillingItem((int)i.Id, new FillingItemType((int)i.Id,i.Name), 
+                            i=>new FillingItem((int)i.MerchPackItemId, 
+                                new FillingItemType((int)i.MerchPackItemId,i.MerchPackItemName), 
                                 skus.Select(
-                                        s=>new OzonEdu.MerchApi.Domain.AggregationModels.ValueObjects.Sku((long)s.Id))
+                                        s=>new OzonEdu.MerchApi.Domain.AggregationModels.ValueObjects.Sku((long)s.SkuId))
                                     .ToList().AsReadOnly()))
                         .ToList().AsReadOnly()
                 )
@@ -94,12 +98,14 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
             var merchPack = await connection.QueryAsync<
                 List<Models.MerchPack>, List<Models.MerchPackItem>,List<Models.Sku>, MerchPack>
             (commandDefinition,
-                (merchpacks, packItems,skus) => new MerchPack((int) merchpacks.FirstOrDefault().Id,
-                    new MerchType(new MerchPackType((int)merchpacks.FirstOrDefault().Id, merchpacks.FirstOrDefault().Name)),
+                (merchpacks,
+                    packItems,skus) => new MerchPack((int) merchpacks.FirstOrDefault().MerchPackId,
+                    new MerchType(new MerchPackType((int)merchpacks.FirstOrDefault().MerchPackId, merchpacks.FirstOrDefault().MerchPackName)),
                     packItems.Select(
-                        i=>new FillingItem((int)i.Id, new FillingItemType((int)i.Id,i.Name), 
+                        i=>new FillingItem((int)i.MerchPackItemId, new FillingItemType((int)i.MerchPackItemId
+                                ,i.MerchPackItemName), 
                             skus.Select(
-                                s=>new OzonEdu.MerchApi.Domain.AggregationModels.ValueObjects.Sku((long)s.Id))
+                                s=>new OzonEdu.MerchApi.Domain.AggregationModels.ValueObjects.Sku((long)s.SkuId))
                                 .ToList().AsReadOnly()))
                         .ToList().AsReadOnly()
                     )
