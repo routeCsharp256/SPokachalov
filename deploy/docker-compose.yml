@@ -8,24 +8,39 @@ services:
       context: ..
       dockerfile: Dockerfile
     ports:
-      - "80:80"
-      - "443:443"
-  
-  employees-service:
-    hostname: 'employees-service'
-    image: 'ghcr.io/ozon-edu-csharp-2021/employees-service:main'
-
-  stok-api:
-      hostname: 'stok-api'
-      image: 'ghcr.io/ozon-edu-csharp-2021/stock-api:main'
+      - "5000:5000"
+      - "5002:5002"
+    environment:
+      DatabaseConnectionOptions__ConnectionString: "Host=host.docker.internal;Port=5426;Database=merch-api;Username=postgres;Password=root"
+    depends_on:
+      - merchendise-service-db
       
-  supply-service:
-    hostname: 'supply-service'
-    image: 'ghcr.io/ozon-edu-csharp-2021/supply-service:main'  
+  merchendise-service-db:
+    image: postgres:latest
+    hostname: 'merchendise-service-db'
+    ports:
+      - "5426:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: merch-api
+    command: "-c log_statement=all"
+     
+#  employees-service:
+#    hostname: 'employees-service'
+#    image: 'ghcr.io/ozon-edu-csharp-2021/employees-service:main'
+#
+#  stok-api:
+#      hostname: 'stok-api'
+#      image: 'ghcr.io/ozon-edu-csharp-2021/stock-api:main'
+      
+#  supply-service:
+#    hostname: 'supply-service'
+#    image: 'ghcr.io/ozon-edu-csharp-2021/supply-service:main'  
     
-  emailing-service:
-    hostname: 'emailing-service'
-    image: 'ghcr.io/ozon-edu-csharp-2021/emailing-service:main'
+#  emailing-service:
+#    hostname: 'emailing-service'
+#    image: 'ghcr.io/ozon-edu-csharp-2021/emailing-service:main'
    
   
    

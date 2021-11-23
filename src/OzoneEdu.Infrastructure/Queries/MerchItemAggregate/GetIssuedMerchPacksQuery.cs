@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using MediatR;
-using OzonEdu.MerchApi.Domain.AggregationModels.CustomerAggregate;
 using OzonEdu.MerchApi.Domain.AggregationModels.MerchItemAggregate;
 
 namespace OzonEdu.Infrastructure.Queries.StockItemAggregate

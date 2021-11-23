@@ -14,6 +14,7 @@ namespace OzonEdu.MerchApi.Domain.AggregationModels.MerchItemAggregate
 {
     public sealed class MerchItem : Entity
     {
+        public override int Id { get; protected set; }
         public MerchPack Pack { get;  private set;}
         public IReadOnlyCollection<Sku> SkuList { get; private set; }
         public IssueType IssueType { get; }
@@ -25,6 +26,16 @@ namespace OzonEdu.MerchApi.Domain.AggregationModels.MerchItemAggregate
 
         public MerchItem(MerchCustomer customer, MerchPack pack, IReadOnlyCollection<Sku> skuList, IssueType issueType)
         {
+            Pack = pack;
+            SetSkuCollection(skuList);
+            IssueType = issueType;
+            Customer = customer;
+            OrderDate = new OrderDate(DateTime.Now);
+        }
+        
+        public MerchItem(int id, MerchCustomer customer, MerchPack pack, IReadOnlyCollection<Sku> skuList, IssueType issueType)
+        {
+            Id = id;
             Pack = pack;
             SetSkuCollection(skuList);
             IssueType = issueType;

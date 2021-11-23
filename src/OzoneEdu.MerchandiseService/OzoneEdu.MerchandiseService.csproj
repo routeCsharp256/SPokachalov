@@ -10,4 +10,8 @@
       <ProjectReference Include="..\OzoneEdu.Infrastructure\OzoneEdu.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Npgsql" Version="6.0.0" />
+    </ItemGroup>
+
 </Project>
