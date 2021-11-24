@@ -41,7 +41,7 @@ namespace OzonEdu.MerchApi.Domain.AggregationModels.CustomerAggregate
             Name = name;
             SetMail(mail);
             MentorName = mentorName;
-            SetMentorMail(MentorMail);
+            SetMentorMail(mentorMail);
         }
 
         private void SetMail(MailCustomer mail)

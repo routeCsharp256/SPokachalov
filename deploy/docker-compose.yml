@@ -2,18 +2,18 @@ version: '3.8'
 
 services:
 
-  merchendise-service:
-    hostname: 'merchendise-service'
-    build:
-      context: ..
-      dockerfile: Dockerfile
-    ports:
-      - "5000:5000"
-      - "5002:5002"
-    environment:
-      DatabaseConnectionOptions__ConnectionString: "Host=host.docker.internal;Port=5426;Database=merch-api;Username=postgres;Password=root"
-    depends_on:
-      - merchendise-service-db
+#  merchendise-service:
+#    hostname: 'merchendise-service'
+#    build:
+#      context: ..
+#      dockerfile: Dockerfile
+#    ports:
+#      - "5000:5000"
+#      - "5002:5002"
+#    environment:
+#      DatabaseConnectionOptions__ConnectionString: "Host=host.docker.internal;Port=5426;Database=merch-api;Username=postgres;Password=root"
+#    depends_on:
+#      - merchendise-service-db
       
   merchendise-service-db:
     image: postgres:latest
