@@ -113,10 +113,9 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
            SELECT item.id as MerchItemId, item.orderdate,item.confirmdate,
             customer.id as CustomerId, customer.mail as CustomerMail, customer.mentormail as CustomerMentorMail,customer.mentorname as CustomerMentorName,
                    customer.name as CustomerName,
-            status.id as StatusId, status.name as MerchStatusName, 
             issuetype.id as IssueTypeId, issuetype.name as IssueTypeName,
             sku.id as SkuId, merchpack.id as MerchPackId, merchpack.name as MerchPackName, items.id as MerchPackItemId,
-            items.name as MerchPackItemName,  merchsku.id as MerchItemSku
+            items.name as MerchPackItemName,  merchsku.id as SkuId
             from merch_items item 
             left join customers customer on customer.id = item.customerid
             left join merch_status status on status.id = item.statusid
@@ -140,11 +139,11 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
             var merchItem = await connection.QueryAsync<
                 Models.MerchItem,
                 Models.Customer,
-                List<Models.Sku>,
-                Models.IssueType,
-                Models.MerchPack, List<Models.MerchPackItem>, List<Models.Sku>, MerchItem>
+                Models.IssueType,   Models.Sku,
+                Models.MerchPack, Models.MerchPackItem, Models.Sku, MerchItem>
             (commandDefinition,
-                (merchitem, customer, skus, issuetype,
+                (merchitem, customer,  issuetype, skus,
+
                         merchpacks, merchpackitems, merchpackitemscus) =>
                     new MerchItem(
                         (int) merchitem.MerchItemId,
@@ -154,23 +153,23 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
                             new NameCustomer(customer.CustomerName),
                             new MailCustomer(customer.CustomerMentorMail),
                             new NameCustomer(customer.CustomerMentorName)
-                        ),
+
+                        ), 
                         new MerchPack(
                             (int) merchpacks.MerchPackId,
                             new MerchType(new MerchPackType((int) merchpacks.MerchPackId, merchpacks.MerchPackName)),
-                            merchpackitems.Select(
-                                    i => new FillingItem((int) i.MerchPackItemId,
-                                        new FillingItemType((int) i.MerchPackItemId, i.MerchPackItemName),
-                                        merchpackitemscus.Select(
-                                                s => new OzonEdu.MerchApi.Domain.AggregationModels.ValueObjects.Sku(
-                                                    (long) s.SkuId))
-                                            .ToList().AsReadOnly()))
-                                .ToList().AsReadOnly()
+                            (new List<FillingItem>(){ 
+                                     new FillingItem((int) merchpackitems.MerchPackItemId,
+                                        new FillingItemType((int) merchpackitems.MerchPackItemId, merchpackitems.MerchPackItemName),
+                                        (new List<Sku>(){new Sku(merchpackitemscus.SkuId)}).AsReadOnly()),
+                                        
+                                    }).AsReadOnly()
                         ),
-                        skus.Select(s => new Sku(s.SkuId)).ToList().AsReadOnly(),
+                        (new List<Sku>(){new Sku(skus.SkuId)}).AsReadOnly(),
                         new IssueType((int) issuetype.IssueTypeId, issuetype.IssueTypeName)
                         )
-                , splitOn:"Id,Id,Id,Id,Id,Id,Id,Id,Id"
+                        , splitOn:"MerchItemId,CustomerId,IssueTypeId,SkuId,MerchPackId,MerchPackItemId,SkuId"
+
                 );
             foreach (var item in merchItem)
             {
