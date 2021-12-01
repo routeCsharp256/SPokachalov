@@ -69,42 +69,57 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
                 commandTimeout: Timeout,
                 cancellationToken: cancellationToken);
             var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
-            var merchItem = await connection.QueryAsync<Models.MerchItem,
+            var merchItemList = await connection.QueryAsync<Models.MerchItem,
                 Models.Customer,
-                List<Models.Sku>,
-                Models.IssueType,
-                Models.MerchPack, List<Models.MerchPackItem>, List<Models.Sku>, MerchItem>
-            (commandDefinition,
-                (merchitem, customer, skus, issuetype,
-                        merchpacks, merchpackitems, merchpackitemscus) =>
-                    new MerchItem(
-                        (int) merchitem.MerchItemId,
-                        new MerchCustomer(
-                            (int) customer.CustomerId,
-                            new MailCustomer(customer.CustomerMail),
-                            new NameCustomer(customer.CustomerName),
-                            new MailCustomer(customer.CustomerMentorMail),
-                            new NameCustomer(customer.CustomerMentorName)
-                        ),
-                        new MerchPack(
-                            (int) merchpacks.MerchPackId,
-                            new MerchType(new MerchPackType((int) merchpacks.MerchPackId, merchpacks.MerchPackName)),
-                            merchpackitems.Select(
-                                    i => new FillingItem((int) i.MerchPackItemId,
-                                        new FillingItemType((int) i.MerchPackItemId, i.MerchPackItemName),
-                                        merchpackitemscus.Select(
-                                                s => new OzonEdu.MerchApi.Domain.AggregationModels.ValueObjects.Sku(
-                                                    (long) s.SkuId))
-                                            .ToList().AsReadOnly()))
-                                .ToList().AsReadOnly()
-                        ),
-                        skus.Select(s => new Sku(s.SkuId)).ToList().AsReadOnly(),
-                        new IssueType((int) issuetype.IssueTypeId, issuetype.IssueTypeName)
-                    )
+                Models.IssueType, Models.Sku,
+                Models.MerchPack, Models.MerchPackItem, Models.Sku, Models.MerchItem>
+            (commandDefinition, (merchitem, customer, issuetype, skus,
+                merchpack, merchpackitem, merchpackitemscus) =>
+            {
+                merchitem.Customer = customer;
+                merchitem.IssueType = issuetype;
+
+                merchitem.MerchPack = merchpack;
+
+                merchitem.MerchSkusList.Add(merchpackitemscus);
+
+                if (!merchitem.MerchPack.MerchPackItems.Any(x => x.MerchPackItemId == merchpackitem.MerchPackItemId))
+                    merchitem.MerchPack.MerchPackItems.Add(merchpackitem);
+                merchitem.MerchPack.MerchPackItems.First(x => x.MerchPackItemId == merchpackitem.MerchPackItemId)
+                    .MerchPackItemSkusList.Add(skus);
+                merchpackitem.MerchPackItemSkusList.Add(skus);
+
+                return merchitem;
+            }, splitOn: "MerchItemId,CustomerId,IssueTypeId,SkuId,MerchPackId,MerchPackItemId,SkuId");
+
+            var item = merchItemList.FirstOrDefault();
+            var merchItem = new MerchItem((int) item.MerchItemId,
+                new MerchCustomer(
+                    id = (int) item.Customer.CustomerId,
+                    new MailCustomer(item.Customer.CustomerMail),
+                    new NameCustomer(item.Customer.CustomerName),
+                    new MailCustomer(item.Customer.CustomerMentorMail),
+                    new NameCustomer(item.Customer.CustomerMentorName)
+                ),
+                new MerchPack(
+                    (int) item.MerchPackId,
+                    new MerchType(
+                        new MerchPackType((int) item.MerchPackId,
+                            item.MerchPack.MerchPackName)),
+                    item.MerchPack.MerchPackItems.Select(
+                            i => new FillingItem((int) i.MerchPackItemId,
+                                new FillingItemType((int) i.MerchPackItemId, i.MerchPackItemName),
+                                i.MerchPackItemSkusList.Select(
+                                    s => new OzonEdu.MerchApi.Domain.AggregationModels
+                                        .ValueObjects.Sku(s.SkuId)).ToList().AsReadOnly()))
+                        .ToList().AsReadOnly()
+                ),
+                item.MerchSkusList.Select(s => new Sku(s.SkuId)).ToList().AsReadOnly(),
+                new IssueType((int) item.IssueType.IssueTypeId, item.IssueType.IssueTypeName)
             );
 
-            _changeTracker.Track(merchItem.FirstOrDefault());
-            return merchItem.FirstOrDefault();
+            _changeTracker.Track(merchItem);
+            return merchItem;
         }
 
         public async Task<List<MerchItem>> FindByCustomerIdAsync(int id, CancellationToken cancellationToken = default)
@@ -127,7 +142,7 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
             left join merch_pack_items items on packs.merchpackitemid = items.id
             left join merch_pack_items_skus itemskus on itemskus.merchpackitemid = items.id
             left join skus merchsku on merchsku.id = itemskus.skuid 
-            where  MerchItemId = @MerchItemId";
+            where  CustomerId = @MerchItemId";
 
             var parameters = new {MerchItemId = id};
             var commandDefinition = new CommandDefinition(
@@ -136,47 +151,60 @@ namespace OzonEdu.MerchApi.Infrastructure.DAL.Repositories
                 commandTimeout: Timeout,
                 cancellationToken: cancellationToken);
             var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
-            var merchItem = await connection.QueryAsync<
-                Models.MerchItem,
+            var merchItemList = await connection.QueryAsync<Models.MerchItem,
                 Models.Customer,
-                Models.IssueType,   Models.Sku,
-                Models.MerchPack, Models.MerchPackItem, Models.Sku, MerchItem>
-            (commandDefinition,
-                (merchitem, customer,  issuetype, skus,
-
-                        merchpacks, merchpackitems, merchpackitemscus) =>
-                    new MerchItem(
-                        (int) merchitem.MerchItemId,
-                        new MerchCustomer(
-                            (int) customer.CustomerId,
-                            new MailCustomer(customer.CustomerMail),
-                            new NameCustomer(customer.CustomerName),
-                            new MailCustomer(customer.CustomerMentorMail),
-                            new NameCustomer(customer.CustomerMentorName)
-
-                        ), 
-                        new MerchPack(
-                            (int) merchpacks.MerchPackId,
-                            new MerchType(new MerchPackType((int) merchpacks.MerchPackId, merchpacks.MerchPackName)),
-                            (new List<FillingItem>(){ 
-                                     new FillingItem((int) merchpackitems.MerchPackItemId,
-                                        new FillingItemType((int) merchpackitems.MerchPackItemId, merchpackitems.MerchPackItemName),
-                                        (new List<Sku>(){new Sku(merchpackitemscus.SkuId)}).AsReadOnly()),
-                                        
-                                    }).AsReadOnly()
-                        ),
-                        (new List<Sku>(){new Sku(skus.SkuId)}).AsReadOnly(),
-                        new IssueType((int) issuetype.IssueTypeId, issuetype.IssueTypeName)
-                        )
-                        , splitOn:"MerchItemId,CustomerId,IssueTypeId,SkuId,MerchPackId,MerchPackItemId,SkuId"
-
-                );
-            foreach (var item in merchItem)
+                Models.IssueType, Models.Sku,
+                Models.MerchPack, Models.MerchPackItem, Models.Sku, Models.MerchItem>
+            (commandDefinition, (merchitem, customer, issuetype, skus,
+                merchpack, merchpackitem, merchpackitemscus) =>
             {
-                _changeTracker.Track(item);
-            }
+                merchitem.Customer = customer;
+                merchitem.IssueType = issuetype;
 
-            return merchItem.ToList();
+                merchitem.MerchPack = merchpack;
+
+                merchitem.MerchSkusList.Add(merchpackitemscus);
+
+                if (!merchitem.MerchPack.MerchPackItems.Any(x => x.MerchPackItemId == merchpackitem.MerchPackItemId))
+                    merchitem.MerchPack.MerchPackItems.Add(merchpackitem);
+                merchitem.MerchPack.MerchPackItems.First(x => x.MerchPackItemId == merchpackitem.MerchPackItemId)
+                    .MerchPackItemSkusList.Add(skus);
+                merchpackitem.MerchPackItemSkusList.Add(skus);
+
+                return merchitem;
+            }, splitOn: "MerchItemId,CustomerId,IssueTypeId,SkuId,MerchPackId,MerchPackItemId,SkuId");
+
+
+            var merchItem = merchItemList.Select(item => new MerchItem((int) item.MerchItemId,
+                    new MerchCustomer(
+                        id = (int) item.Customer.CustomerId,
+                        new MailCustomer(item.Customer.CustomerMail),
+                        new NameCustomer(item.Customer.CustomerName),
+                        new MailCustomer(item.Customer.CustomerMentorMail),
+                        new NameCustomer(item.Customer.CustomerMentorName)
+                    ),
+                    new MerchPack(
+                        (int) item.MerchPack.MerchPackId,
+                        new MerchType(
+                            new MerchPackType((int) item.MerchPack.MerchPackId,
+                                item.MerchPack.MerchPackName)),
+                        item.MerchPack.MerchPackItems.Select(
+                                i => new FillingItem((int) i.MerchPackItemId,
+                                    new FillingItemType((int) i.MerchPackItemId, i.MerchPackItemName),
+                                    i.MerchPackItemSkusList.Select(
+                                        s => new OzonEdu.MerchApi.Domain.AggregationModels
+                                            .ValueObjects.Sku(s.SkuId)).ToList().AsReadOnly()
+                                    )
+                                )
+                            .ToList().AsReadOnly()
+                    ),
+                    item.MerchSkusList.Select(s => new Sku(s.SkuId)).ToList().AsReadOnly(),
+                    new IssueType((int) item.IssueType.IssueTypeId, item.IssueType.IssueTypeName)
+                )
+            );
+            foreach (var item in merchItem)
+                _changeTracker.Track(item);
+            return merchItem as List<MerchItem>;
         }
     }
 }
